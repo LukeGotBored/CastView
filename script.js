@@ -34,13 +34,13 @@ if(languageOverride[0]){
 document.addEventListener('DOMContentLoaded', async() => {
     let newChangelog = await fetchChangelog()
     if(newChangelog.version != changelog.version){
-        if(!changelog.versionId || changelog.versionId < newChangelog.versionId){
+        if(changelog.versionId < newChangelog.versionId){
             // it's out of date
-            console.log("[*] There's a new update available" + `(${changelog.version} -> ${newChangelog.version})`)
+            console.log("[*] There's a new update available" + `(${changelog.version} | ${changelog.versionId} -> ${newChangelog.version} | ${newChangelog.versionId})`)
             document.getElementById("err-description").innerHTML = `There's a new build of CastView available for download!`
         } else {
             // if it's newer than release
-            console.err("[*] You are using a developer build, you shouldn't be using this!")
+            console.error("[*] You are using a developer build, you shouldn't be using this!"+ `(${changelog.version} | ${changelog.versionId} -> ${newChangelog.version} | ${newChangelog.versionId})`) 
             document.getElementById("err-description").innerHTML = `You are using a developer build, you shouldn't be using this!`
         }
         
