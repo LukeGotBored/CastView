@@ -135,39 +135,26 @@
                     }
                 }
                 
-                #description{
-                    color: #1f1f1f;
-                    margin-bottom: 5px;
-                    padding: 15px;
-                    margin-left: auto;
-                    margin-right: auto;
-                    overflow: auto;
-                    overflow-x: hidden;
-                    max-height: calc(90vh - 100px);
-
+                #cl-description{
+                    #cl-descContent{
+                            color: #1f1f1f;
+                            margin-bottom: 5px;
+                            padding: 15px;
+                            margin-left: auto;
+                            margin-right: auto;
+                            overflow: auto;
+                            overflow-x: hidden;
+                            max-height: calc(90vh - 100px);
+                    }
                     
                     
                     
 
-                    #updates{
-                        ul{
-                            padding-left: 20px;
-                            // line list
+                    #cl-updates{
                             li{
                                 list-style-type: none; 
                                 padding-left: 5px;
-
-                                &:before{
-                                    content: '-';
-                                    color: inherit;
-                                    font-size: 1em;
-                                    margin-left: -20px;
-                                    margin-right: 10px;
-                                }
-                            }
-
-                            
-                        }
+                            } 
 
                         background-color: rgba(129, 236, 129, 0.555);
                         color: rgb(19, 124, 19);
@@ -175,7 +162,7 @@
                         border-radius: 10px;
                     }
 
-                    #notice{
+                    #cl-notice{
                         ul{
                             padding-left: 20px;
                             // line list
@@ -202,9 +189,24 @@
                         margin-top: 15px;
                     }
 
+                    #cl-error{
+                        display: flex;
+                        align-items: flex-start;
+                        justify-content: center;
+                        background-color: rgb(235, 68, 68);
+                        color: rgb(255, 255, 255);
+                        padding: 20px;
+                        border-radius: 10px;
+                        margin-bottom: 15px;
+
+                        div{
+                            margin-left: 15px;
+                        }
+                    }
+
                 }
 
-                .media{
+                .cl-media{
                     padding: 15px;
                     padding-top: 15px;
                     display: grid;

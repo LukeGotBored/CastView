@@ -1,6 +1,19 @@
 import 'regenerator-runtime/runtime'
 import { async } from 'regenerator-runtime/runtime'
 const earthview = require("./assets/earthview.json") 
+const changelog = require("./assets/changelog.json")
+
+// fetch the new changelog from github
+
+window.fetchChangelog = async function(){
+    // fetch the changelog json from github
+    let changelogUrl = await fetch("https://gitcdn.link/cdn/LukeGotBored/CastView/master/assets/changelog.json")
+    let changelogData = await changelogUrl.json()
+    return changelogData
+
+}
+
+
 
 
 let availableLanguages = ["it", "fr", "en", "es"]
@@ -15,39 +28,87 @@ if(!availableLanguages.includes(globalLanguage)){
 if(languageOverride[0]){
     globalLanguage = languageOverride[1]
 }
-console.log("[*] Language: " + globalLanguage)
 
 
 
 document.addEventListener('DOMContentLoaded', async() => {
+    let newChangelog = await fetchChangelog()
+    if(newChangelog.version != changelog.version){
+        if(!changelog.versionId || changelog.versionId < newChangelog.versionId){
+            // it's out of date
+            console.log("[*] There's a new update available" + `(${changelog.version} -> ${newChangelog.version})`)
+            document.getElementById("err-description").innerHTML = `There's a new build of CastView available for download!`
+        } else {
+            // if it's newer than release
+            console.err("[*] You are using a developer build, you shouldn't be using this!")
+            document.getElementById("err-description").innerHTML = `You are using a developer build, you shouldn't be using this!`
+        }
+        
+    } else {
+        console.log("[*] Everything is up to date!")
+        document.getElementById("cl-error").style.display = "none"
+    }
+    
+    console.log("[*] Current language: " + globalLanguage)
 
+    // load the changelog 
+    document.getElementById("betaBadge").innerHTML = changelog.version + " • " + changelog.date
+    document.getElementById("cl-descContent").innerHTML = changelog.description.replace(/\n/g, "<br>")
+    
+    if(changelog.changes.length > 0){
+        // make a list
+        let changesList = document.getElementById("cl-updates")
+        // place the list inside changesList
+        for(let i = 0; i < changelog.changes.length; i++){
+            let change = `<b>${changelog.changes[i].title}</b><br>${changelog.changes[i].description}`
+            if(i != changelog.changes.length - 1){
+                change+= "<br><br>";
+            }
+            
+            let changeItem = document.createElement("li")
+            changeItem.innerHTML = change
+            changesList.appendChild(changeItem)
+        }
+        
+    } else {
+        document.getElementById("cl-updates").style.display = "none"
+    }
+    
+    if(!changelog.notice){
+        document.getElementById("cl-notice").style.display = "none"
+    } else {
+        document.getElementById("cl-notice").innerHTML = changelog.notice
+    }
+    
+    
+    
     // Initialize the date
     document.getElementById("date").innerHTML = "" + generateDate(new Date())
     document.getElementById("clockString").innerHTML = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
-
-
+    
+    
     document.getElementById("popupManager").addEventListener('click', async function(e){
         if(e.target.id == "popupManager"){
             // get the popup that is currently not display: none;
             closePopup()
         }
-            
+        
     })
-
-
-
-
+    
+    
+    
+    
     // wait for the image to load
     try{
         await updateWeather("London");
         await setWallpaper();
+        openPopup("about")
     } catch(e) {
         document.getElementsByClassName('background')[0].style.opacity = 0
         
 
     }
 
-    openPopup("about")
 
 
 
@@ -194,8 +255,6 @@ window.closePopup = async function(item){
 }
 
 window.openPopup = async function(popupType){
-    // check if there is already a popup
-
     for(let i = 0; i < document.getElementsByClassName("popup").length; i++){
         if(document.getElementsByClassName("popup")[i].style.display != "none" || !document.getElementsByClassName("popup")[i].style.display){
             document.getElementsByClassName("popup")[i].style.opacity = 0
