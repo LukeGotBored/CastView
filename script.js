@@ -18,7 +18,7 @@ window.fetchChangelog = async function(){
 
 let availableLanguages = ["it", "fr", "en", "es"]
 let globalLanguage = navigator.language.split("-")[0]
-let languageOverride = [true, "en"]
+let languageOverride = [false, "en"]
 
 if(!availableLanguages.includes(globalLanguage)){
     console.error("[!] Language not available, defaulting to english")
@@ -213,15 +213,15 @@ window.generateDate = function(date) {
 
     switch(globalLanguage){
         case "it":
-            return `${day} ${monthNames[date.getMonth()][0].toLowerCase()} ${date.getFullYear()}`
+            return `${day} ${monthNames[date.getMonth()][0]} ${date.getFullYear()}`
         case "fr":
-            return `${day} ${monthNames[date.getMonth()][1].toLowerCase()} ${date.getFullYear()}`
+            return `${day} ${monthNames[date.getMonth()][1]} ${date.getFullYear()}`
         case "en":
-            return `${monthNames[date.getMonth()][2].toLowerCase()} ${day}${daySuffix}, ${date.getFullYear()}`
+            return `${monthNames[date.getMonth()][2]} ${day}${daySuffix}, ${date.getFullYear()}`
         case "es":
-            return `${day} ${monthNames[date.getMonth()][3].toLowerCase()} ${date.getFullYear()}`
+            return `${day} ${monthNames[date.getMonth()][3]} ${date.getFullYear()}`
         default:
-            return `${monthNames[date.getMonth()][2].toLowerCase()} ${day}${daySuffix}, ${date.getFullYear()}`
+            return `${monthNames[date.getMonth()][2]} ${day}${daySuffix}, ${date.getFullYear()}`
     }
 
 }
