@@ -7,7 +7,7 @@ const changelog = require("./assets/changelog.json")
 
 window.fetchChangelog = async function(){
     // fetch the changelog json from github
-    let changelogUrl = await fetch("https://gitcdn.link/cdn/LukeGotBored/CastView/master/assets/changelog.json")
+    let changelogUrl = await fetch("https://gitcdn.link/cdn/LukeGotBored/CastView/master/assets/changelog.json?random=" + Math.random())
     let changelogData = await changelogUrl.json()
     return changelogData
 
@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', async() => {
         } else {
             // if it's newer than release
             console.error("[*] You are using a developer build, you shouldn't be using this!"+ `(${changelog.version} | ${changelog.versionId} -> ${newChangelog.version} | ${newChangelog.versionId})`) 
-            document.getElementById("err-description").innerHTML = `You are using a developer build, you shouldn't be using this!`
+            document.getElementById("err-description").innerHTML = `You are using a developer build, something probably went (very) wrong!`
         }
         
     } else {

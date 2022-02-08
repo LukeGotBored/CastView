@@ -191,8 +191,9 @@
 
                     #cl-error{
                         display: flex;
-                        align-items: flex-start;
-                        justify-content: center;
+                        align-items: center;
+                        text-align: left;
+                        justify-content: flex-start;
                         background-color: rgb(235, 68, 68);
                         color: rgb(255, 255, 255);
                         padding: 20px;

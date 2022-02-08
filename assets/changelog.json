@@ -1,18 +1,18 @@
 {
     "date": "02/08/2022",
-    "versionId": "2",
-    "version": "Developer Build 0.0.2",
+    "versionId": "4",
+    "version": "Developer Build 0.0.4",
     "description": "<b>Hello testers!</b>\nwe've been working non-stop to make <b>CastView</b> the best new tab for anyone,<br>with this update we introduce some small, breaking changes:",
     "changes": [
         {
-            "title": "⛅ did someone say weather?",
-            "description": "We added a new feature to CastView that allows you to see the weather for a location, how cool is that?"
+            "title": "🔁 Updating has never been this easy",
+            "description": "We've added a brand new update system, you'll be notified when you're running an outdated version of CastView, how cool is that?"
         },
         {
-            "title": "⚡ did someone say speed?",
-            "description": "With the power of technology™️, CastView is faster than ever!"
+            "title": "🚑 Published hotfixes for the hotfixes! wait wha-",
+            "description": "Developing stuff isn't easy, some of the known bugs <i>should</i> have been fixed, let us know if you find any."
         }
     ],
 
-    "notice": ""
+    "notice": "the weather settings are still unfinished, feel free to use updateWeather(\"location\") to change the location"
 }
