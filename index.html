@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Castview Beta</title>
+
+    <link rel="stylesheet" href="./style/castview.scss">
+
+    <!-- fontawesome -->
+    <link rel="stylesheet" href="./style/all.min.css">
+    
+    
+    <!-- import all the scripts -->
+    <script src="script.js"></script>
+</head>
+<body>
+    <div class="background">
+        <noscript style="font-size: 1rem;">JavaScript is required for this page to work, sorry 😅</noscript>
+    </div>
+
+
+    <div class="popup-background" id="popupManager">
+        <div class="popup" id="about">
+            <div class="close" onclick="closePopup(this.parentElement.id)"><i class="fas fa-times"></i></div>
+            <div id="title">Welcome to <span style="font-weight: 700; color: #1f1f1f;">CastView</span> <div id="betaBadge">Beta • 02/04/2022</div></div>
+            <div id="description">
+                <b>Hi there!</b><br>Thanks for trying out CastView this early in development. 
+                <br>I'm constantly working on it, make sure to report any bugs you find!
+                <br>
+                <br>
+                <div id="updates">
+                    <b>What's new?</b><br>
+                    <ul>
+                        <li><b>First release</b></li>
+                        <li><b>Revamped UI</b></li>    
+                        <li><b>Added a brand new pop-up system!</b></li>
+                    </ul>
+                </div>
+
+                <div id="notice">
+                    <b>Notice for testers</b><br>
+                        I haven't tested this website outside of my laptop, <a href="https://t.me/lukethewuke" style="text-decoration: underline;">let me know</a> if there are bugs
+                        <br>Also, if you want to test the popups, open up the browser developer console and run 
+                        <ul>
+                            <li><b>openPopup("[settings or about]")</b></li> 
+                            <li><b>closePopup("[item (optional)]")</b></li>
+
+                            
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="popup" id="settings">
+            <div class="close" onclick="closePopup(this.parentElement.id)"><i class="fas fa-times"></i></div>
+            
+            <div id="title">(￣▽￣)</div>
+            <span style="margin: auto; text-align: center!important; width: 100%">This is the settings menu, pretty empty eh?</span>
+        </div>
+
+
+    </div>
+
+
+
+
+    <div class="container">
+        <div class="contentArea" id="topLeft">
+            <div class="weatherWrapper">
+                <div class="weather" id="weather">
+                    <span class="weather-location" id="weatherLocation"></span>
+                    
+                    <div class="weatherInfo">
+                        <div class="weather-icon"><img id="weatherIcon" src="" alt=""></div>
+                        <span class="weather-temp" id="weatherTemp"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="contentArea" id="topRight">
+        </div>
+        
+        <div class="contentArea" id="bottomLeft">
+            <div class="digitalClock">
+                <div class="buttons">
+                    <button id="edit"><i class="fas fa-pen"></i></button>
+                    <button id="settings" onclick="openPopup('settings')"><i class="fas fa-cog"></i></button>
+                </div>
+                <div id="date"></div>
+                <!-- add support to AM-PM -->
+                <div id="clock"> <span id="clockString"></span></div>
+            </div>
+        </div>
+        
+        <div class="contentArea" id="bottomRight">
+            <div class="credits">
+                Failed to load informations.
+            </div>
+        </div>
+    </div>
+</body>
+</html>
