@@ -7,7 +7,7 @@ const changelog = require("./assets/changelog.json")
 
 window.fetchChangelog = async function(){
     // fetch the changelog json from github
-    let changelogUrl = await fetch("https://gitcdn.link/cdn/LukeGotBored/CastView/master/assets/changelog.json?random=" + Math.random())
+    let changelogUrl = await fetch("https://raw.githubusercontent.com/LukeGotBored/CastView/master/assets/changelog.json")
     let changelogData = await changelogUrl.json()
     return changelogData
 
