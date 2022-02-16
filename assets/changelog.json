@@ -1,12 +1,16 @@
 {
     "date": "02/08/2022",
-    "versionId": "4.1",
-    "version": "Developer Build 0.0.4.1",
+    "versionId": "5",
+    "version": "Developer Build 0.0.5",
     "description": "<b>Hello testers!</b>\nwe've been working non-stop to make <b>CastView</b> the best new tab for anyone,<br>with this update we introduce some small, breaking changes:",
     "changes": [
         {
-            "title": "🔁 Updating has never been this easy",
-            "description": "We've added a brand new update system, you'll be notified when you're running an outdated version of CastView, how cool is that?"
+            "title": "⚙️ Settings menu (Not working)",
+            "description": "there's now a (non functional) (broken) settings menu!"
+        },
+        {
+            "title": "📍 Now the GeoLocation system <i>Kind of</i> works",
+            "description": "Don't worry, nothing is being shared with anyone but yourself (and the weather provider, naturally)."
         },
         {
             "title": "🚑 Published hotfixes for the hotfixes! wait wha-",
