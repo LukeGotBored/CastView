@@ -10,6 +10,8 @@
 
     <!-- fontawesome -->
     <link rel="stylesheet" href="./style/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Icons"
+      rel="stylesheet">
     
     
     <!-- import all the scripts -->
@@ -48,9 +50,39 @@
 
         <div class="popup" id="settings">
             <div class="close" onclick="closePopup(this.parentElement.id)"><i class="fas fa-times"></i></div>
+            <div id="settings-title">Settings</div>
+            <div id="settings-wrapper">
+                <div id="settings-tabs">
+                    <div class="settings-menuItem--selected" id="general" onclick="switchSettingsTab(this)" data-tab="general"><i class="fas fa-cog"></i> <span>General</span></div>
+                    <div class="settings-menuItem" id="customization" onclick="switchSettingsTab(this)" data-tab="customization"><i class="fas fa-palette"></i> <span>Appearance</span></div>
+                    <div class="settings-menuItem" id="language" onclick="switchSettingsTab(this)" data-tab="language"><i class="fas fa-language"></i> <span>Language</span></div>
+                    <div class="settings-menuItem" id="about" onclick="switchSettingsTab(this)" data-tab="about"><i class="fas fa-info-circle"></i> <span>About</span></div>
+                </div>
+                <div id="settings-content">
+                    <div id="tab-general">
+                        <div class="section">
+                            <div class="warning">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <div class="warning-text">
+                                    <b>Warning:</b> This feature is still in development.
+                                </div>
+                            </div>
+                            <div class="section-title">
+                                General
+                            </div>
+                            <div class="option"><label for="enableWeather">Enable Weather</label> <input type="checkbox" id="enableWeather" onclick="toggleWeather()"></div>
+                            <div class="option"><label for="showAnimations">Show Animations</label> <input type="checkbox" id="showAnimations" onclick="toggleAnimations()"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="popup" id="egg">
+            <div class="close" onclick="closePopup(this.parentElement.id)"><i class="fas fa-times"></i></div>
             
-            <div id="title">(￣▽￣)</div>
-            <span style="margin: auto; text-align: center!important; width: 100%">Still no settings... welp!</span>
+            <div id="title">(★‿★)</div>
+            <span style="margin: auto; text-align: center!important; width: 100%">⭐ Come back later...</span>
         </div>
 
 
@@ -65,13 +97,13 @@
                 <div class="weather" id="weather">
                     <span class="weather-location" id="weatherLocation"></span>
                     
-                    <div class="weatherInfo">
+                    <div class="weatherInfo" id="weatherInfo">
                         <div class="weather-icon"><img id="weatherIcon" alt="Loading..."></div>
-                            <span class="weather-temp" id="weatherTemp"></span>
-                        </div>
-                    </div>
+                        <span class="weather-temp" id="weatherTemp"></span>
                     </div>
                 </div>
+            </div>
+        </div>
         
         <div class="contentArea" id="topRight">
         </div>
@@ -79,8 +111,8 @@
         <div class="contentArea" id="bottomLeft">
             <div class="digitalClock">
                 <div class="buttons">
-                    <button id="edit"><i class="fas fa-pen"></i></button>
-                    <button id="settings" onclick="openPopup('settings')"><i class="fas fa-cog"></i></button>
+                    <button id="music" type="button" onclick="setWallpaper(settings.provider)"><i class="fas fa-redo"></i></button>
+                    <button id="settings" type="button" onclick="openPopup('settings')"><i class="fas fa-cog"></i></button>
                 </div>
                 <div id="date"></div>
                 <!-- add support to AM-PM -->

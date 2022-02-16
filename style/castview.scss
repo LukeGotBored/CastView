@@ -12,7 +12,7 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    $widescreen: true;
+    $widescreen: false;
 
     
     -webkit-touch-callout: none;
@@ -50,10 +50,12 @@
     
     body{
         color: var(--color-primary);
-        background-color: #1f1f1f;
+        background-color: #1f1f1f!important;
         background-size: cover!important;
         background-repeat: no-repeat!important;
+        background-position: center!important;
         overflow: hidden;
+        transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 
 
         .popup-background{
@@ -71,8 +73,8 @@
             z-index: 9998;
             transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             
+            // basic popup
             .popup{
-                // basic popup
                 transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
                 background-color: white;
                 border-radius: 10px;
@@ -269,18 +271,136 @@
                     }
                 }
 
-            }
+                #settings-title{
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    padding: 20px;
+                    font-size: 1.5em;
+                    margin-left: 5px;
+                }
+
+                #settings-wrapper{
+                    display: flex;
+                    flex-direction: row;
+                    margin-top: 50px;
+
+                    #settings-tabs{
+                        width: 10rem;
+                        
+                        
+                        .settings-menuItem{
+                            border-radius: 10px;
+                            padding: 10px;
+                            margin: 5px;
+                            transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+                            
+                            span{
+                                margin-left: 5px;
+                                transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+                            }
+
+                            &:hover{
+                                background-color: #9797971a;
+                                cursor: pointer;
+                            }
+
+                            &:hover span{
+                                margin-left: 10px;
+                            }
+                        }
+
+
+                        .settings-menuItem--selected{
+                            background-color: #9797971a;
+                            color: #1f1f1f;
+                            font-weight: bold;
+                            border-radius: 10px;
+                            padding: 10px;
+                            margin: 5px;
+                            transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+                            span{
+                                margin-left: 10px;
+                                transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+                            }
+
+                            &:hover{
+                                background-color: #3d3d3d1a;
+                            }
+                        }
+                    }
+                            
+                    #settings-content{
+                        padding: 10px;
+                        min-width: 500px;
+                        min-height: 300px;
+                        padding-left: 25px;
+                        transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+                        .warning{
+                            i{
+                                padding-right: 5px;
+                            }
+                            ul{
+                                padding-left: 20px;
+                                // line list
+                                li{
+                                    list-style-type: none; 
+                                    padding-left: 5px;
     
-            .popup-settings{
-                // popup for settings
-            }
+                                    &:before{
+                                        content: '-';
+                                        color: inherit;
+                                        font-size: 1em;
+                                        margin-left: -20px;
+                                        margin-right: 10px;
+                                    }
+                                }
     
+                                
+                            }
+    
+                            background-color: rgba(236, 225, 129, 0.555);
+                            color: rgb(124, 117, 19);
+                            padding: 20px;
+                            margin-bottom: 20px;
+                            border-radius: 10px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                        }
+
+
+                        .section-title{
+                            text-transform: uppercase;
+                            font-size: 1em;
+                            font-weight: bold;
+                            margin-bottom: 10px;
+                        }
+
+                        .option{
+                            display: flex;
+                            flex-direction: row;
+                            margin-bottom: 10px;
+                            width: 100%;
+                            align-items: center;
+                            justify-content: space-between;
+                        }
+
+
+
+
+                    }
+                }       
+            }
         }
-
-
-
+        
+        
+        
 
         .background{
+            z-index: -1;
             position: absolute;
             top: 0;
             left: 0;
@@ -295,14 +415,12 @@
 
             // everything but size
             transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 99999;
             pointer-events: none;
         }
         
 
 
         .container{
-            // 4x4 grid
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             grid-template-rows: repeat(2, 1fr);
@@ -314,7 +432,7 @@
 
             // if the variable widescreen is disabled, set the max width to 100vw and auto margin
             @if not($widescreen) {
-                max-width: 1920px;
+                max-width: 1700px;
                 width: 100vw;
                 margin: auto;
             } @else {
@@ -341,6 +459,26 @@
                 //     border: 3px dashed var(--color-primary); 
                 //     opacity: 1;
                 // }
+
+                animation: startAnim 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+                animation-delay: 0.1s;
+
+                @keyframes startAnim{
+                    0%{
+                        opacity: 0; 
+                        padding: 0;
+                    }
+                    
+                    40%{
+                        opacity: 0;
+                    }
+
+                    100%{
+                        opacity: 1;
+                        padding: 15px;
+                    }
+                }
+
             }
 
             #topLeft{
@@ -462,6 +600,7 @@
     }
 
     .credits{
+        transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         a{
             // disable link decoration
             text-decoration: none;
@@ -474,6 +613,10 @@
     }
 
     .weatherWrapper{
+        display: none;
+        opacity: 0;
+        transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
         .weather{
             display: grid;
             justify-content: start;
@@ -484,12 +627,17 @@
                 color: var(--color-primary);
                 opacity: 0.8;
             }
+
+            .weather-location{
+                transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            }
             
             .weatherInfo{
                 display: flex;
                 justify-content: flex-start;
                 align-items: center;
-                
+                transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
                 .weather-icon{
                     
                     img{
