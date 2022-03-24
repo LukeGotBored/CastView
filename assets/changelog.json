@@ -1,22 +1,24 @@
 {
     "date": "02/08/2022",
-    "versionId": "5",
-    "version": "Developer Build 0.0.5",
-    "description": "<b>Hello testers!</b>\nwe've been working non-stop to make <b>CastView</b> the best new tab for anyone,<br>with this update we introduce some small, breaking changes:",
+    "versionId": "6",
+    "version": "0.0.6",
+    "description": "hhhhhhhh I'm too lazy to add a full description for this update, but who cares anyways?",
     "changes": [
         {
-            "title": "⚙️ Settings menu (Not working)",
-            "description": "there's now a (non functional) (broken) settings menu!"
+            "title": "⚙️ Introducing: Settings!",
+            "description": "Check out the settings page by right clicking anywhere on the screen!"
         },
         {
-            "title": "📍 Now the GeoLocation system <i>Kind of</i> works",
-            "description": "Don't worry, nothing is being shared with anyone but yourself (and the weather provider, naturally)."
+            "title": "🌟 New Context Menu",
+            "description": "Did you know that mouses had two buttons? Well I sure didn't!\nNow you can right click anything to get context-specific options!"
         },
         {
-            "title": "🚑 Published hotfixes for the hotfixes! wait wha-",
-            "description": "Developing stuff isn't easy, some of the known bugs <i>should</i> have been fixed, let us know if you find any."
+            "title": "🖌️ Colors are cool!",
+            "description": "Some random guy told me \"Okay but what if you add customizable color schemes?\" and I was like \"shi now we talkin\""
+        },
+        {
+            "title": "🌚 Dark mode",
+            "description": "For all the night owls out there, we finally implemented a dark mode!"
         }
-    ],
-
-    "notice": "the weather settings are still unfinished, feel free to use updateWeather(\"location\") to change the location"
+    ]
 }

@@ -1,65 +1,90 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Castview Beta</title>
-
+    <title>New Tab</title>
+    <link rel="icon" type="image/png" href="./favicon.ico"/>
     <link rel="stylesheet" href="./style/castview.scss">
-
-    <!-- fontawesome -->
     <link rel="stylesheet" href="./style/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Icons"
-      rel="stylesheet">
     
+    <link href="https://fonts.googleapis.com/css2?family=Material+Icons" rel="stylesheet">
+    <!-- TODO [!] MAKE THIS LOCAL ^ -->
+
+    <script>document.title = `${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} | New Tab`</script>
     
-    <!-- import all the scripts -->
-    <script src="script.js" type="module"></script>
+    <script src="./scripts/utils.js" defer></script>
+    <script src="./scripts/script.js" type="module"></script>
 </head>
 <body>
+    <div class="ctxMenu" id="ctxm-hidden">
+        <div class="ctx-item" id="ctxItem-settings">
+            <i class="material-icons">settings</i>
+            &nbsp;
+            <span>Settings</span>
+        </div>
+        <div class="ctx-item" id="ctxItem-about">
+            <i class="material-icons">info_outline</i>
+            &nbsp;
+            <span>About</span>
+        </div>
+
+    </div>
+    <!-- loading overlay -->
     <div class="background">
-        <noscript style="font-size: 1rem;">JavaScript is required for this page to work, sorry 😅</noscript>
+        <noscript style="font-size: 1rem;">JavaScript is required for this page to work.</noscript>
+    </div>
+
+    <div class="wallpaper" id="wallpaper">
+        
     </div>
 
 
+
+
+
     <div class="popup-background" id="popupManager">
-        <div class="popup" id="about">
+        <div class="popup" id="about" style="opacity: 1; transform: scale(1); display: none;">
             <div class="close" onclick="closePopup(this.parentElement.id)"><i class="fas fa-times"></i></div>
-            <div id="title"><span style="font-weight: 700; color: #1f1f1f;">CastView</span> <div id="betaBadge">Beta • 02/04/2022</div></div>
+            <div id="title"><div id="title-main">CastView</div><div id="betaBadge">Beta • 02/04/2022</div></div>
             <div id="cl-description">
                 <div id="cl-descContent">
-                    
                 </div>
                 <div id="cl-error">
                     <i class="fas fa-exclamation-triangle"></i>
                     <div id="err-description">
-                        You're using an outdated version of <b>CastView</b>. Please update to the latest version to get the latest features.
+                        Couldn't connect to the server.
                     </div>
                 </div>
                 <div id="cl-updates">
-                    
                 </div>
                 
                 <div id="cl-notice">
-                    
                 </div>
                 
             </div>
         </div>
 
-        <div class="popup" id="settings">
+        <div class="popup" id="settings" style="opacity: 1; transform: scale(1); display: none;">
             <div class="close" onclick="closePopup(this.parentElement.id)"><i class="fas fa-times"></i></div>
             <div id="settings-title">Settings</div>
             <div id="settings-wrapper">
-                <div id="settings-tabs">
-                    <div class="settings-menuItem--selected" id="general" onclick="switchSettingsTab(this)" data-tab="general"><i class="fas fa-cog"></i> <span>General</span></div>
-                    <div class="settings-menuItem" id="customization" onclick="switchSettingsTab(this)" data-tab="customization"><i class="fas fa-palette"></i> <span>Appearance</span></div>
-                    <div class="settings-menuItem" id="language" onclick="switchSettingsTab(this)" data-tab="language"><i class="fas fa-language"></i> <span>Language</span></div>
-                    <div class="settings-menuItem" id="about" onclick="switchSettingsTab(this)" data-tab="about"><i class="fas fa-info-circle"></i> <span>About</span></div>
+                
+                
+                
+                <div id="settings-menu">
+                    <div class="settings-menuItem" id="menuItem-general" onclick="switchSettingsTab('general')"><i class="fas fa-cog"></i> <span>General</span></div>
+                    <div class="settings-menuItem" id="menuItem-customization" onclick="switchSettingsTab('customization')"><i class="fas fa-palette"></i> <span>Appearance</span></div>
+                    <div class="settings-menuItem" id="menuItem-language" onclick="switchSettingsTab('language')"><i class="fas fa-language"></i> <span>Language</span></div>
+                    <div class="settings-menuItem" id="menuItem-advanced" onclick="switchSettingsTab('advanced')"><i class="fas fa-cogs"></i> <span>Advanced</span></div>
+                    <div class="settings-menuItem" id="menuItem-about" onclick="switchSettingsTab('about')"><i class="fas fa-info-circle"></i> <span>About</span></div>
                 </div>
+
+
+
                 <div id="settings-content">
-                    <div id="tab-general">
+                    <div class="tab" id="tab-general" data-tab="general">
                         <div class="section">
                             <div class="warning">
                                 <i class="fas fa-exclamation-triangle"></i>
@@ -70,22 +95,140 @@
                             <div class="section-title">
                                 General
                             </div>
-                            <div class="option"><label for="enableWeather">Enable Weather</label> <input type="checkbox" id="enableWeather" onclick="toggleWeather()"></div>
-                            <div class="option"><label for="showAnimations">Show Animations</label> <input type="checkbox" id="showAnimations" onclick="toggleAnimations()"></div>
+                            <div class="empty">
+                                <div id="em-title">🔨(╹⏑╹ )</div>
+                                <div id="em-description">
+                                    Woah, it's quite empty in here...
+                                </div>                                    
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tab" id="tab-customization" data-tab="customization">
+                        <div class="section">
+                            <div class="warning">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <div class="warning-text">
+                                    <b>Warning:</b> This feature is still in development.
+                                </div>
+                            </div>
+
+                            <div class="section-title">
+                                Theme Color
+                            </div>
+
+
+                            <div class="color-row">
+                                <div class="color-box-selected" onclick="changeTheme(this)" id="col-red" data-color="#F44336" style="background-color: #F44336;"></div>
+                                <div class="color-box" onclick="changeTheme(this)" id="col-pink" data-color="#E91E63" style="background-color: #E91E63;"></div>
+                                <div class="color-box" onclick="changeTheme(this)" id="col-purple" data-color="#9C27B0" style="background-color: #9C27B0;"></div>
+                                <div class="color-box" onclick="changeTheme(this)" id="col-deep-purple" data-color="#673AB7" style="background-color: #673AB7;"></div>
+                                <div class="color-box" onclick="changeTheme(this)" id="col-indigo" data-color="#3F51B5" style="background-color: #3F51B5;"></div>
+                                <div class="color-box" onclick="changeTheme(this)" id="col-blue" data-color="#2196F3" style="background-color: #2196F3;"></div>
+                                <div class="color-box" onclick="changeTheme(this)" id="col-light-blue" data-color="#03A9F4" style="background-color: #03A9F4;"></div>
+                                <div class="color-box" onclick="changeTheme(this)" id="col-cyan" data-color="#00BCD4" style="background-color: #00BCD4;"></div>
+                                <div class="color-box" onclick="changeTheme(this)" id="col-teal" data-color="#009688" style="background-color: #009688;"></div>
+                                <div class="color-box" onclick="changeTheme(this)" id="col-green" data-color="#4CAF50" style="background-color: #4CAF50;"></div>
+                                <div class="color-box" onclick="changeTheme(this)" id="col-light-green" data-color="#8BC34A" style="background-color: #8BC34A;"></div>
+                                <div class="color-box" onclick="changeTheme(this)" id="col-lime" data-color="#CDDC39" style="background-color: #CDDC39;"></div>
+                                <div class="color-box" onclick="changeTheme(this)" id="col-yellow" data-color="#FFEB3B" style="background-color: #FFEB3B;"></div>
+                                <div class="color-box" onclick="changeTheme(this)" id="col-amber" data-color="#FFC107" style="background-color: #FFC107;"></div>
+                                <div class="color-box" onclick="changeTheme(this)" id="col-orange" data-color="#FF9800" style="background-color: #FF9800;"></div>
+                            </div>
+                            <div class="section-title">
+                                Look
+                            </div>
+                            <div class="settings">
+                                <span class="option"><label for="darkMode">Dark mode</label> <input type="checkbox" id="darkMode" onchange="toggleDarkMode()"></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                    <div class="tab" id="tab-language" data-tab="language">
+                        <div class="section">
+                            <div class="warning">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <div class="warning-text">
+                                    <b>Notice:</b> Feature temporarely disabled 
+                                </div>
+                            </div>
+                            <div class="section-title">
+                                Language
+                            </div>
+                            <div class="section-langList">
+                                <div class="langList-item" onclick="setLanguage('en')"><label for="langEN">English</label> <div class="checkbox" id="en"></div></div>
+                                <div class="langList-item" onclick="setLanguage('es')"><label for="langES">Español</label> <div class="checkbox" id="es"></div></div>
+                                <div class="langList-item" onclick="setLanguage('de')"><label for="langDE">Deutsch</label> <div class="checkbox" id="de"></div></div>
+                                <div class="langList-item" onclick="setLanguage('fr')"><label for="langFR">Français</label> <div class="checkbox" id="fr"></div></div>
+                                <div class="langList-item" onclick="setLanguage('it')"><label for="langIT">Italiano</label> <div class="checkbox" id="it"></div></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tab" id="tab-about" data-tab="about">
+                        <div class="section">
+                           <div class="section-update-title">
+                                <div class="material-icons">cast</div>
+                                <br>
+                                CastView
+                                <div id="subtitle">&lt;/&gt; made with ❤️ by Luke </div>
+                            </div>
+                            <div class="section-update-description">
+                                    <b>Current Version:</b> <span id="version">0.0.0</span><br>
+
+                                    <!-- <br> -->
+                                    <!-- <b>Latest Version:</b> <span id="lastestVersion">Unknown</span> -->
+                                <br>
+                                    <button id="btn_updates" class="btn_checkForUpdates" onclick="checkForUpdates('SettingsAbout')"> <span class="material-icons">sync</span> <span id="text">Check for updates</span></button>
+                                
+                                    <span id="updateInfo"></span>
+                                </div>
+                        </div>
+                    </div>
+
+                    <div class="tab" id="tab-error" data-tab="error">
+                        <div class="section">
+                            <div class="section-update-title">
+                                <div class="material-icons">warning</div>
+                                <br>
+                                Something went wrong
+                                <div id="subtitle">&lt;/&gt; Couldn't load the menu! </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab" id="tab-advanced" data-tab="advanced">
+                        <div class="section">
+                            <div class="section-title">
+                                Advanced
+                            </div>
+                            <div class="empty">
+                                <div id="em-title">🔨(╹⏑╹ )</div>
+                                <div id="em-description">
+                                    Woah, it's quite empty in here...
+                                </div>                                    
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab" id="tab-secrets" data-tab="secrets">
+                        <div class="section">
+                            <div class="section-title">
+                                Secrets
+                            </div>
+                            <div class="empty" style="height: 15rem">
+                                <div id="em-title">♪(´▽｀)</div>
+                                <div id="em-description">
+                                    Woah, you found a secret!<br>
+                                    Come back later to find some cool stuff!
+                                </div>                                    
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <div class="popup" id="egg">
-            <div class="close" onclick="closePopup(this.parentElement.id)"><i class="fas fa-times"></i></div>
-            
-            <div id="title">(★‿★)</div>
-            <span style="margin: auto; text-align: center!important; width: 100%">⭐ Come back later...</span>
-        </div>
-
-
     </div>
 
 
@@ -96,7 +239,7 @@
             <div class="weatherWrapper">
                 <div class="weather" id="weather">
                     <span class="weather-location" id="weatherLocation"></span>
-                    
+
                     <div class="weatherInfo" id="weatherInfo">
                         <div class="weather-icon"><img id="weatherIcon" alt="Loading..."></div>
                         <span class="weather-temp" id="weatherTemp"></span>
@@ -116,7 +259,7 @@
                 </div>
                 <div id="date"></div>
                 <!-- add support to AM-PM -->
-                <div id="clock"> <span id="clockString"></span></div>
+                <div id="clock"></div>
             </div>
         </div>
         
