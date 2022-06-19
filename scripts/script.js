@@ -11,6 +11,14 @@
 
 import 'regenerator-runtime/runtime'
 import utils from './utils.js'
+import ClipboardJS from 'clipboard'
+import { async } from 'regenerator-runtime/runtime';
+const unsplashKey = "S_BD1M0Oo6ZisUI3ABtJ07ioJ03RgVqzBgy7iscfqIo"
+// please no steal
+
+
+
+
 
 
     // // Localization:
@@ -32,7 +40,9 @@ const serverChangelog = utils.fetchChangelog().then(data => data)
 
 let wallpaperUrl = null
 let isPopupOpen = false;
-let isRefreshingWp = false;
+let wpLoading = false;
+window.version = localChangelog.version
+let accentColor;
 
 
 
@@ -56,7 +66,11 @@ document.addEventListener('DOMContentLoaded', async() => {
     // Load everything
     try{
         utils.updateTitle();
-        await setWallpaper();    
+        await setFavPosition(localStorage.getItem("favoritesMode") || "bottom");
+        await setTheme();
+        await setAccent();
+        updateWeather();
+        await setWallpaper(localStorage.getItem("unsplashCategory") || "nature"); 
     } catch(e) {
         console.error(`Something went wrong!\n${e}`)
     }
@@ -83,63 +97,60 @@ document.addEventListener('DOMContentLoaded', async() => {
 
 
 
-window.updateWeather = async function(place){
-    let currentName = document.getElementById("weatherLocation").innerHTML == "&nbsp;" + place ? true : false
-    console.log(document.getElementById("weatherLocation").innerHTML)
-    console.log(place)
-    console.log("[*] Requested city is the same? " + currentName)
-    let language = settings.language
-    
-    if(!place){
-        if(settings.location == "auto"){
-            return fetchLocation()
-        } else {
-            place = settings.location
+window.updateWeather = async function(place, units){
+    try{   
+        if(!place){
+            place = "London"
         }
-    }
+        if(!units) units = "metric"
+        const baseUrl = "https://api.openweathermap.org/data/2.5/weather?q="
+        const apiKey = "128b2a70fd3d8d83854ae6d95ec1a1eb"
+        
+        // fetch the weather data
+        let weatherData = await fetch(`${baseUrl}${encodeURIComponent(place)}&appid=${apiKey}&units=${units}&lang=${settings.language}`)
+        weatherData = await weatherData.json()
+        if(weatherData.cod){
 
-    console.log(`[*] Current location: ${geoLoc ? geoLoc : "Unknown"}`)
+            switch(weatherData.cod){
+                case "404":
+                    console.error("[!] City not found")
+                    settings.location = "auto"
+                    return
 
-    if(!currentName){
-        document.getElementsByClassName("weatherWrapper")[0].style.opacity = "0"
-    } else {
-        document.getElementById("weatherInfo").style.opacity = "0"
-    }
-    
-    let weatherUrl;
-    let weatherData;
+                case "401":
+                    console.error("[!] Invalid API key")
+                    return
 
-    
-    weatherUrl = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(place)}&appid=128b2a70fd3d8d83854ae6d95ec1a1eb&units=metric&lang=${language}`)
-    weatherData = await weatherUrl.json()
-    if(weatherData.cod == "404"){
-        console.error("[!] City not found")
-        settings.location = "auto"
-        document.getElementsByClassName("weatherWrapper")[0].style.opacity = 1
+                case "400":
+                    console.error("[!] Bad request")
+                    return
+            }
+        }
+
+        // format the weather data
+        let data = {
+            temp: weatherData.main.temp,
+            location: weatherData.name,
+            icon: weatherData.weather[0].icon,
+            description: weatherData.weather[0].description
+        }
+
+        // generate the icon url
+        let iconUrl = `https://openweathermap.org/img/wn/${data.icon}.png`
+        document.getElementById("weatherIcon").src = iconUrl
+        document.getElementById("weatherIcon").alt = data.description
+        document.getElementById("weatherIcon").title = data.description
+
+        document.getElementById("weatherTemp").innerHTML = data.temp + "°C"
+        document.getElementById("weatherLocation").innerHTML = "&nbsp;" + data.location
+        document.getElementsByClassName("weatherWrapper")[0].style.display = "block"
+        await wait(100)
         document.getElementById("weatherInfo").style.opacity = 1
-        return false
-    }
-
-
-    
-    // format the weather data
-    document.getElementById("weatherTemp").innerHTML = weatherData.main.temp + "°C"
-    document.getElementById("weatherLocation").innerHTML = "&nbsp;" + weatherData.name
-    // generate the icon url
-    let iconUrl = `https://openweathermap.org/img/wn/${weatherData.weather[0].icon}.png`
-    document.getElementById("weatherIcon").src = iconUrl
-    document.getElementById("weatherIcon").alt = weatherData.weather[0].description
-    document.getElementById("weatherIcon").title = weatherData.weather[0].description
-
-    document.getElementsByClassName("weatherWrapper")[0].style.display = "block"
-    await wait(100)
-    if(!currentName){
         document.getElementsByClassName("weatherWrapper")[0].style.opacity = 1
-    } else {
-        document.getElementById("weatherInfo").style.opacity = 1
+    } catch(e) {
+        console.error(`Something went wrong!\n${e}`)
     }
-
-}
+}   
 
 window.fetchLocation = async function(){
     if(navigator.geolocation){
@@ -148,6 +159,7 @@ window.fetchLocation = async function(){
             let lon = position.coords.longitude
             geoLoc = await fetch(`http://api.openweathermap.org/geo/1.0/reverse?lat=${lat}&lon=${lon}&appid=128b2a70fd3d8d83854ae6d95ec1a1eb`)
             geoLoc = await geoLoc.json()
+            console.log(geoLoc)
             geoLoc = await geoLoc[0].name
             updateWeather(geoLoc)
 
@@ -233,8 +245,8 @@ window.openPopup = async function(popupType){
     
     // create the new popup
     switch(popupType){
-        case "about":
-            console.log("[*] Opening the about popup")
+        case "updates":
+            console.log("[*] Opening the updates popup")
             document.getElementsByClassName("popup-background")[0].style.display = "grid"
             await wait(100)
             document.getElementsByClassName("popup-background")[0].style.opacity = 1
@@ -297,6 +309,15 @@ window.openPopup = async function(popupType){
                 document.getElementById("settings").style.opacity = 1
             break
             
+            case "about":
+                document.getElementsByClassName("popup-background")[0].style.display = "grid"
+                await wait(100)
+                document.getElementsByClassName("popup-background")[0].style.opacity = 1
+
+                document.getElementById("about").style.display = "block"
+                document.getElementById("about").style.transform = "scale(1)"
+                document.getElementById("about").style.opacity = 1
+            break
             
             default:
                 console.warn("Couldn't find the requested popup!")
@@ -319,16 +340,17 @@ window.wait = async function(ms){
 }
 
 
-
-
 window.checkForUpdates = async function(source){
-    /* TO BE ADDED 
-    - Notifications
-    - Errors
+    /* TODO 
+        - Notifications
+        - Errors
         - Automatic updates
-        */
-       let button;
-       if(source == "SettingsAbout"){
+    */
+
+    console.log("[*] Checking for updates")
+
+    let button;
+    if(source == "SettingsAbout"){
         document.getElementById("updateInfo").style.opacity = 0;
         // get the button
         button = document.getElementsByClassName("btn_checkForUpdates")[0]
@@ -429,10 +451,11 @@ window.setLanguage = async function(language){
 
 window.toggleDarkMode = function(theme){
     if(theme == null){
-        console.log("Before:" + darkMode)
-        settings.darkMode = document.getElementById("darkMode").checked
-        theme = settings.darkMode
-        console.log("After:" + darkMode)
+        // console.log("Before:" + darkMode)
+        // theme = document.getElementById("darkModeCheckbox").checked
+        theme = false;
+        // theme = settings.darkMode
+        // console.log("After:" + darkMode)
         console.log("[!] No theme specified, switched to " + theme)
     } 
     
@@ -472,82 +495,109 @@ window.toggleDarkMode = function(theme){
 let tries = 0
 window.setWallpaper = async function(provider){
     // set the classname to fa-spin
-    // document.getElementsByClassName("fas fa-redo")[0].classList.add("fa-spin")
-    if(isRefreshingWp){
+    if(wpLoading){
         console.log("[!] The wallpaper is already being refreshed")
         return
     }
 
 
-    isRefreshingWp = true
+    wpLoading = true
     document.getElementById("wallpaper").style.transform = "scale(1.1)"
+    document.getElementById("wallpaper").style.filter = "saturate(0)"
+    
+    let wallpaper;
+    let image;
 
     try{
-        tries++
-        let availableProviders = ['earth', 'unsplash', 'custom']
-        
-        if(!provider || !availableProviders.includes(provider)){
-            provider = 'earth'
-            console.warn("[?] Couldn't find the requested provider, setting back to 'earth'")
+        tries++        
+        if(provider){
+            localStorage.setItem("unsplashCategory", provider)
         }
 
-        let wallpaper;
-        let image;
 
         document.getElementsByClassName('background')[0].style.opacity = 1;
-        document.getElementsByClassName("credits")[0].style.height = "0px";
-        // document.getElementsByClassName("credits")[0].style.opacity = 0;
-        // document.getElementsByClassName("credits")[0].style.width = "0px";
+        // document.getElementsByClassName("credits")[0].style.height = "0px";
         await wait(600)
-        switch(provider){
-            case 'earth':
-                let randomNumber = Math.floor(Math.random() * earthview.length)
-                wallpaper = earthview[randomNumber].image
+        unsplashCategories = [
+            "nature",
+            "architecture",
+            "patterns",
+            "mountains",
+            "wallpapers",
+            "experimental",
+            "aurora"
+        ]
 
-                image = await utils.loadImage(wallpaper)
-                document.getElementsByClassName('background')[0].style.opacity = 0;
-                
-                document.getElementById("wallpaper").style.background = `linear-gradient(to top, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.2), rgba(0,0,0,0.7)), url(${wallpaper})`
+        if(!provider){
+            provider = localStorage.getItem("unsplashCategory")
+        }
 
-                let creditString = earthview[randomNumber].region ? `${earthview[randomNumber].region}, ${earthview[randomNumber].country}` : `${earthview[randomNumber].country}`
-                document.getElementsByClassName("credits")[0].innerHTML = `<a href="${earthview[randomNumber].map}" target="_blank" title="Photo from Google Earth">${creditString}</a>`
-                break;
-
-            case 'unsplash':
-                wallpaper = 'https://source.unsplash.com/random/1920x1080?landscape,wallpaper&random=' + Math.random()
-                image = await utils.loadImage(wallpaper)
-                document.getElementById("wallpaper").style.background = `linear-gradient(to top, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.2), rgba(0,0,0,0.7)), url(${wallpaper})`
-                document.getElementsByClassName("credits")[0].innerHTML = `<a href="https://unsplash.com/" target="_blank">Photo from <span style="text-decoration: underline;">Unsplash</span></a>`
-                break;
-            }    
-            
-            // let color = await utils.getAverageColor(wallpaper)
-            // // get the average color of the image
-            // let colorString = `rgb(${color.r}, ${color.g}, ${color.b})`
-            // console.log("[!] Color found: " + colorString)
+        if(!unsplashCategories.includes(provider)){
+            return console.warn("[!] The requested category is not available ( Requested provider: ", provider, ")")
+        }
 
 
-            tries = 0
-        }catch(e) {
+        if(!localStorage.getItem("unsplashCategory")){
+            localStorage.setItem("unsplashCategory", "architecture")
+        }
+            // use unsplash source to get a random image from the selected category
+            try{
+                let unsplashResult = await fetch(`https://api.unsplash.com/photos/random?orientation=landscape&per_page=1&collection_id=${localStorage.getItem("aurora")}&client_id=${unsplashKey}`)
+                let unsplashData = await unsplashResult.json()
+                console.log("[*] Using unsplash as wallpaper", unsplashData)
+                document.getElementById("wallpaper").style.background = "linear-gradient(to bottom, rgba(0,0,0,0.7), transparent, rgba(0,0,0,0.7)), url(" + unsplashData.urls.small + ")"   
+                wallpaper = unsplashData.urls.full
+                document.getElementById("wallpaper-author").innerHTML = `<a href="${unsplashData.user.links.html}" target="_blank">${unsplashData.user.name}</a>`
+            } catch(e){
+                console.error("[!] Error while fetching from unsplash", e)
+                wallpaper = "https://source.unsplash.com/collection/architecture?sig=" + Math.random()
+        }
+
+        // Reset the attempts
+        tries = 0
+
+
+        } catch(e) {
             if(tries < 10){
-                setWallpaper(provider);
-                console.warn("an invalid wallpaper was found, skipping... [Attempt " + tries + "]")
+                setWallpaper(localStorage.getItem('unsplashCategory'));
+                console.warn("[Wallpaper] Something went wrong while trying to fetch the wallpaper, skipping... [Attempt " + tries + "]\n" + e)
             } else {
-                console.error("[!] Couldn't load any wallpaper, check your internet connection")
+                console.error("[Wallpaper] Couldn't connect to the server")
                 console.log(e)
             }
-        }   
+        }
+
+
+
+        if(wallpaper){
+            image = new Image()
+            image.src = wallpaper
+            image.onload = function(){
+                document.getElementById("wallpaper").style.background = "linear-gradient(to bottom, rgba(0,0,0,0.7), transparent, rgba(0,0,0,0.7)), url(" + wallpaper + ")"        
+                document.getElementsByClassName('background')[0].style.opacity = 0;
+                // document.getElementsByClassName("credits")[0].style.opacity = 1;
+                // document.getElementsByClassName("credits")[0].style.height = "20px";
+            }
+        }
+
+        // wait for the image to load
+        await wait(500)        
         document.getElementById("wallpaper").style.transform = "scale(1.05)"
-        document.getElementsByClassName('background')[0].style.opacity = 0;
-        document.getElementsByClassName("credits")[0].style.opacity = 1;
-        document.getElementsByClassName("credits")[0].style.height = "20px";
-        // document.getElementsByClassName("credits")[0].style.width = "100%";
-        // wallpaperUrl = wallpaper;
+        document.getElementById("wallpaper").style.filter = "saturate(1)"
+        let showcases = document.getElementsByClassName("showcase");
 
+     
 
-        await wait(1000)
-        // document.getElementsByClassName("fas fa-redo")[0].classList.remove("fa-spin")
-        isRefreshingWp = false
+        let avgColor = await utils.getAverageColor(wallpaper)
+        console.log("[*] Average color: " + avgColor.hex)
+        document.documentElement.style.setProperty("--background-accent", avgColor.hex)
+        accentColor = avgColor.hex
+
+        for(let i = 0; i < showcases.length; i++){
+            showcases[i].style.backgroundColor = avgColor.hex
+        }
+        await wait(2000)
+        wpLoading = false
     }
 
 
@@ -563,6 +613,7 @@ window.setWallpaper = async function(provider){
         await updateWeather(location);
         document.getElementsByClassName("weather-location")[0].style.opacity = 1;
     }
+
 
     let egg = 0;
     let eggTriggered = false;
@@ -694,36 +745,20 @@ window.setWallpaper = async function(provider){
     }
 
 
-    window.changeTheme = function(item){
-        let color = item.dataset.color
-        localStorage.setItem("theme", item.id)
-        settings.theme = item.id
-
-        // set the variable --theme-color to the color
-        document.documentElement.style.setProperty("--theme-color", color)
-        
-        // remove the class "color-box-selected from all the color boxes" and replace it with the class "color-box"
-        let colorBoxesSelected = document.getElementsByClassName("color-box-selected")
-        for(let i = 0; i < colorBoxesSelected.length; i++){
-            colorBoxesSelected[i].classList.add("color-box")
-            colorBoxesSelected[i].classList.remove("color-box-selected")
-        }
-
-        // add the class "color-box-selected" to the selected color box
-        item.classList.add("color-box-selected")
-        item.classList.remove("color-box")
-    }
-    
     
     document.addEventListener('keydown', async function(e){
         if(e.key == "Escape"){
+            if(document.getElementsByClassName("ctxMenu")[0].id == "ctxm-show"){
+                document.getElementsByClassName("ctxMenu")[0].id = "ctxm-hidden"
+            }
             if(isPopupOpen) closePopup()
         }
     })
-
+    
     window.showRightClickMenu = async function(context, dev){
         if(!dev) dev = false
         console.log(context)
+        let item = context.target
         // P.S. The Icons are from material design icons
         let contextOptions = [
             {
@@ -816,22 +851,76 @@ window.setWallpaper = async function(provider){
                     },
                 ],
             },
+            {
+                context: "text",
+                options: [
+                    {
+                        name: "Copy",
+                        icon: "content_copy",
+                        // copy to clipboard the text selected
+                        action: "document.execCommand('copy')", 
+                        type: "button",
+                    },
+                    {
+                        name: "Paste",
+                        icon: "content_paste",
+                        // paste the text from the clipboard
+                        action: "document.execCommand('paste')",
+                        type: "button",
+                    },
+                    {
+                        name: "Cut",
+                        icon: "content_cut",
+                        // cut the text selected
+                        action: "document.execCommand('cut')",
+                        type: "button",
+                    },
+                    {
+                        type: "separator",
+                    },
+                    {
+                        name: "Settings",
+                        icon: "settings",
+                        action: "openPopup('settings')",
+                        type: "button",
+                    },
+                    {
+                        name: "About",
+                        icon: "info_outline",
+                        action: "openPopup('about')",
+                        type: "button",
+                    },
+                ],
+            }
         ]
 
         // get the item that was clicked
-        let item = context.target
         
 
         console.log(item)
         
+        // if the user rightclicks #popupManager or any of the children (or sub-children) of it
+        if(context.target.matches("#popupManager, #popupManager *")){
+            return
+        }
+
+
+
+
         let itemsReq;
         switch(item.id){
             case "clock":
                 itemsReq = contextOptions[1].options
                 break;
-            case "topLeft":
+            case "weather":
                 itemsReq = contextOptions[2].options
                 break;
+            case "credits":
+                itemsReq = contextOptions[3].options
+                break;
+            case "spotlightSearch":
+                // itemsReq = contextOptions[4].options
+
 
             default:
                 itemsReq = contextOptions[0].options
@@ -874,8 +963,12 @@ window.setWallpaper = async function(provider){
         // }
         menu.style.top = context.clientY + "px"
 
-        if(menu.getBoundingClientRect().bottom + 20 > window.innerHeight){
-            menu.style.top = (window.innerHeight - menu.getBoundingClientRect().height - 20) + "px"
+        // if the menu is outside the screen, move it to the bottom
+        console.log(menu.getBoundingClientRect().bottom)
+        console.log(window.innerHeight)
+        console.log(menu.getBoundingClientRect().bottom + 100 > window.innerHeight)
+        if(menu.getBoundingClientRect().bottom + 100 > window.innerHeight){
+            menu.style.top = (context.clientY - menu.getBoundingClientRect().height - 125) + "px"
         }
     }
 
@@ -895,7 +988,7 @@ window.setWallpaper = async function(provider){
             if(e.ctrlKey){
                 showRightClickMenu(e, true)
             } else {
-                showRightClickMenu(e)
+                showRightClickMenu(e, false)
             }
         }
     })
@@ -907,3 +1000,161 @@ window.setWallpaper = async function(provider){
             menu.id = "ctxm-hidden"
         }
     })
+
+
+window.copyToClipboard = function(text){
+    console.log(text)
+    // decode from base64
+    text = atob(text)
+    // use clipboard API
+    navigator.clipboard.writeText(text)
+}
+
+
+window.setAccent = function(name){
+    // check if there's a div with the id of color-[name]
+    //if the color is the same as the current color, don't do anything
+    if(name == localStorage.getItem("accent")){
+        return
+    }
+
+
+    if(!name){
+        name = localStorage.getItem("accent")
+    }
+
+    if(!document.getElementById(`color-${name}`)){
+        console.error("[!] No color found with that name")
+        return false
+    }
+
+    // get the hex
+    let hex = document.getElementById(`color-${name}`).style.backgroundColor
+    
+    if(!hex){
+        if(name == "auto"){
+            hex = accentColor
+            document.documentElement.style.setProperty("--theme-color", hex)
+        } else {
+            console.error("[!] No color found with that name")
+            return false
+        }
+    } else {
+        document.documentElement.style.setProperty("--theme-color", hex)
+    }
+
+    console.log(`[*] Accent set to ${hex}, ${name}`)
+    
+    let selected = document.querySelector(`[data-selected="true"]`)
+    selected.removeAttribute("data-selected")
+    
+    let selectedAccent = document.getElementById(`color-${name}`)
+    selectedAccent.setAttribute("data-selected", "true")
+    localStorage.setItem("accent", name)
+}
+
+
+window.setTheme = function(theme){
+    console.log("[*] Theme set to " + theme)
+
+    if(!theme){
+        if(!localStorage.getItem('theme')){
+            localStorage.setItem('theme', 'auto')
+        }
+        theme = localStorage.getItem('theme')
+    }
+
+
+    switch(theme){
+        case 'light':
+            localStorage.setItem('theme', 'light')
+            toggleDarkMode(false)
+            break
+        
+        case 'dark':
+            localStorage.setItem('theme', 'dark')
+            toggleDarkMode(true)
+            break
+
+        case 'auto':
+            localStorage.setItem('theme', 'auto')
+            if(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches){
+                toggleDarkMode(true)
+            } else {
+                toggleDarkMode(false)
+            }
+            break
+    }
+
+    // get the 3 .box items, and remove the attribute from the one that has the data-selected attribute
+    let boxes = document.getElementsByClassName("box")
+    for(let i = 0; i < boxes.length; i++){
+        boxes[i].removeAttribute("data-selected")
+    }
+
+
+    // set the selected attribute to the one that has the same name as the theme
+    let selected = document.getElementById(`${theme.toLowerCase()}Mode`)
+    console.log(selected)
+    selected.setAttribute("data-selected", "true")
+
+}
+
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+    if(localStorage.getItem('theme') == 'auto'){
+        if(event.matches){
+            toggleDarkMode(true)
+        } else {
+            toggleDarkMode(false)
+        }
+    }
+});
+
+window.generateThumbnail = async function(url){
+    let image = new Image()
+    image.crossOrigin = "Anonymous"
+    image.src = url
+
+    image.onload(await function(){
+        
+    })
+}
+
+
+window.setFavPosition = async function(mode){
+
+    switch(mode){
+        case 'off':
+            localStorage.setItem('favoritesMode', 'off')
+            document.getElementsByClassName("pinnedLinksWrapper")[0].style = "opacity: 0; pointer-events: none;"
+            break
+
+        case 'top':
+            localStorage.setItem('favoritesMode', 'top')
+            document.getElementsByClassName("pinnedLinksWrapper")[0].style = "opacity: 0; pointer-events: none; transform: translateY(-10%);"
+            await wait(350)
+
+            // append pinnedLinksWrapper to .topRight
+            document.getElementById("topRight").appendChild(document.getElementsByClassName("pinnedLinksWrapper")[0])
+            await wait(100)
+            document.getElementsByClassName("pinnedLinksWrapper")[0].style = "opacity: 1; pointer-events: auto;"
+            break
+
+        case 'bottom':
+            localStorage.setItem('favoritesMode', 'bottom')
+            document.getElementsByClassName("pinnedLinksWrapper")[0].style = "opacity: 0; pointer-events: none; transform: translateY(10%);"
+            await wait(350)
+
+            // append pinnedLinksWrapper to .bottomRight
+            document.getElementById("bottomRight").appendChild(document.getElementsByClassName("pinnedLinksWrapper")[0])
+            await wait(100)
+            document.getElementsByClassName("pinnedLinksWrapper")[0].style = "opacity: 1; pointer-events: auto;"
+
+            break
+
+        default:
+            console.error("[!] Invalid mode")  
+            break
+            
+    }
+}

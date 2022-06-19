@@ -1,13 +1,27 @@
 {
   "devDependencies": {
+    "@jukben/emoji-search": "^2.0.1",
+    "@parcel/config-webextension": "^2.6.1",
     "@parcel/transformer-sass": "^2.2.1",
-    "sass": "^1.49.0"
+    "buffer": "^6.0.3",
+    "events": "^3.3.0",
+    "https-browserify": "^1.0.0",
+    "process": "^0.11.10",
+    "querystring-es3": "^0.2.1",
+    "sass": "^1.49.0",
+    "stream-http": "^3.2.0",
+    "url": "^0.11.0"
   },
   "dependencies": {
+    "clipboard": "^2.0.10",
+    "debounce": "^1.2.1",
     "fast-average-color": "^7.1.0",
     "localizify": "^2.0.0",
+    "mathjs": "^10.6.1",
     "parcel": "^2.2.1",
-    "regenerator-runtime": "^0.13.9"
+    "regenerator-runtime": "^0.13.9",
+    "twemoji": "^14.0.2",
+    "unsplash-js": "^7.0.15"
   },
   "scripts": {
     "build": "npx -p parcel parcel build index.html"

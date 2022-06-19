@@ -7,15 +7,17 @@
     <title>New Tab</title>
     <link rel="icon" type="image/png" href="./favicon.ico"/>
     <link rel="stylesheet" href="./style/castview.scss">
-    <link rel="stylesheet" href="./style/all.min.css">
+
     
     <link href="https://fonts.googleapis.com/css2?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@48,400,1,0" />
     <!-- TODO [!] MAKE THIS LOCAL ^ -->
 
     <script>document.title = `${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} | New Tab`</script>
     
     <script src="./scripts/utils.js" type="module" defer></script>
     <script src="./scripts/script.js" type="module"></script>
+    <script src="./scripts/spotlight.js" type="module"></script>
 </head>
 <body>
     <div class="ctxMenu" id="ctxm-hidden">
@@ -41,11 +43,22 @@
     </div>
 
 
-
+    <div class="spotlightSearch">
+        <div class="sl-wrapper">
+            <div class="main">
+                <input type="text" id="spotlightSearch" placeholder="Search...">
+            </div>
+            <div class="results" style="display: none;">
+            </div>
+            <div class="footer">
+                <a href="#">What's this?</a>
+            </div>
+        </div>
+    </div>
 
 
     <div class="popup-background" id="popupManager">
-        <div class="popup" id="about" style="opacity: 1; transform: scale(1); display: none;">
+        <div class="popup" id="updates" style="opacity: 1; transform: scale(1); display: none;">
             <div class="close" onclick="closePopup(this.parentElement.id)"><i class="fas fa-times"></i></div>
             <div id="title"><div id="title-main">CastView</div><div id="betaBadge">Beta • 02/04/2022</div></div>
             <div id="cl-description">
@@ -65,20 +78,43 @@
                 
             </div>
         </div>
+        
+        <div class="popup" id="about" style="opacity: 1; transform: scale(1); display: none;">
+                <div class="close" onclick="closePopup(this.parentElement.id)"><i class="fas fa-times"></i></div>
+                <i class="material-icons" id="castview-ico">cast</i>
+                <div id="about-title"><div id="about-title-main"><span id="about-title-cv">Castview</span><br><span id="about-subtitle">Your own personal tab</span></div></div>
+            
+                <div id="about-credits">Made by Luke with ❤️ and ☕</div>
+                <br>
+                <div id="wallpaper-info">
+                    Wallpaper by <b><a id="wallpaper-author">Unknown</a></b>, from <a href="https://unsplash.com" target="_blank"><b>Unsplash</b></a>
+                </div>
+            
+        </div>
+        
+        
 
         <div class="popup" id="settings" style="opacity: 1; transform: scale(1); display: none;">
             <div class="close" onclick="closePopup(this.parentElement.id)"><i class="fas fa-times"></i></div>
             <div id="settings-title">Settings</div>
             <div id="settings-wrapper">
                 
-                
+                <style>
+                    .material-symbols-rounded {
+                        font-variation-settings:
+                        'FILL' 1,
+                        'wght' 400,
+                        'GRAD' 0,
+                        'opsz' 48
+                    }
+                </style>
                 
                 <div id="settings-menu">
-                    <div class="settings-menuItem" id="menuItem-general" onclick="switchSettingsTab('general')"><i class="fas fa-cog"></i> <span>General</span></div>
-                    <div class="settings-menuItem" id="menuItem-customization" onclick="switchSettingsTab('customization')"><i class="fas fa-palette"></i> <span>Appearance</span></div>
-                    <div class="settings-menuItem" id="menuItem-language" onclick="switchSettingsTab('language')"><i class="fas fa-language"></i> <span>Language</span></div>
-                    <div class="settings-menuItem" id="menuItem-advanced" onclick="switchSettingsTab('advanced')"><i class="fas fa-cogs"></i> <span>Advanced</span></div>
-                    <div class="settings-menuItem" id="menuItem-about" onclick="switchSettingsTab('about')"><i class="fas fa-info-circle"></i> <span>About</span></div>
+                    <div class="settings-menuItem" id="menuItem-general" onclick="switchSettingsTab('general')"><i class="material-symbols-rounded">settings</i> <span>General</span></div>
+                    <div class="settings-menuItem" id="menuItem-customization" onclick="switchSettingsTab('customization')"><i class="material-symbols-rounded">palette</i> <span>Theme</span></div>
+                    <div class="settings-menuItem" id="menuItem-language" onclick="switchSettingsTab('language')"><i class="material-symbols-rounded">language</i> <span>Language</span></div>
+                    <div class="settings-menuItem" id="menuItem-advanced" onclick="switchSettingsTab('advanced')"><i class="material-symbols-rounded">code</i> <span>Advanced</span></div>
+                    <div class="settings-menuItem" id="menuItem-about" onclick="switchSettingsTab('about')"><i class="material-symbols-rounded">info</i> <span>About</span></div>
                 </div>
 
 
@@ -86,12 +122,6 @@
                 <div id="settings-content">
                     <div class="tab" id="tab-general" data-tab="general">
                         <div class="section">
-                            <div class="warning">
-                                <i class="fas fa-exclamation-triangle"></i>
-                                <div class="warning-text">
-                                    <b>Warning:</b> This feature is still in development.
-                                </div>
-                            </div>
                             <div class="section-title">
                                 General
                             </div>
@@ -106,45 +136,87 @@
                     
                     <div class="tab" id="tab-customization" data-tab="customization">
                         <div class="section">
-                            <div class="warning">
+                            <!-- <div class="warning">
                                 <i class="fas fa-exclamation-triangle"></i>
                                 <div class="warning-text">
                                     <b>Warning:</b> This feature is still in development.
                                 </div>
+                            </div> -->
+                            
+                            
+
+                
+                            <div class="settings-wrapper">
+                                <div class="section-title">
+                                Theme
+                            </div>
+                            <div class="settings-color">
+                                
+                                <div class="color" onClick="setAccent(this.dataset.color)" id="color-auto" data-color="auto" style="display: none;"></div>
+                                <div class="color" onClick="setAccent(this.dataset.color)" id="color-orange" data-color="orange" style="background-color: #ff9800;" data-selected="true"></div>
+                                <div class="color" onClick="setAccent(this.dataset.color)" id="color-red" data-color="red" style="background-color: #ff5252;"></div>
+                                <div class="color" onClick="setAccent(this.dataset.color)" id="color-pink" data-color="pink" style="background-color: #ff4081;"></div>
+                                <div class="color" onClick="setAccent(this.dataset.color)" id="color-purple" data-color="purple" style="background-color: #bf40bf;"></div>
+                                <div class="color" onClick="setAccent(this.dataset.color)" id="color-deepPurple" data-color="deepPurple" style="background-color: #7c4dff;"></div>
+                                <div class="color" onClick="setAccent(this.dataset.color)" id="color-indigo" data-color="indigo" style="background-color: #3f51b5;"></div>
+                                <div class="color" onClick="setAccent(this.dataset.color)" id="color-blue" data-color="blue" style="background-color: #2196f3;"></div>
+                                <div class="color" onClick="setAccent(this.dataset.color)" id="color-lightBlue" data-color="lightBlue" style="background-color: #03a9f4;"></div>
+                                <div class="color" onClick="setAccent(this.dataset.color)" id="color-cyan" data-color="cyan" style="background-color: #00bcd4;"></div>
+                                <div class="color" onClick="setAccent(this.dataset.color)" id="color-teal" data-color="teal" style="background-color: #009688;"></div>
+                                <div class="color" onClick="setAccent(this.dataset.color)" id="color-green" data-color="green" style="background-color: #4caf50;"></div>
                             </div>
 
-                            <div class="section-title">
-                                Theme Color
-                            </div>
+                                <div class="settings-theme">
+                                    <div class="box" id="lightMode" data-theme="light" onClick="setTheme(this.dataset.theme)">
+                                        <div class="showcase">
+                                            <div class="window">
+                                            </div>
+                                        </div>
+                                        <div class="title">Light</div>
+                                    </div>
+
+                                    <div class="box" id="darkMode" data-theme="dark" onClick="setTheme(this.dataset.theme)">
+                                        <div class="showcase">
+                                            <div class="window">
+                                                
+                                            </div>
+                                        </div>
+                                        <div class="title">Dark</div>
+                                    </div>
+
+                                    <div class="box" id="autoMode" data-selected="true" data-theme="auto" onClick="setTheme(this.dataset.theme)">
+                                        <div class="showcase">
+                                            <div class="window">
+
+                                            </div>
+                                        </div>
+                                        <div class="title">Auto</div>
+                                    </div>
+                                </div>
 
 
-                            <div class="color-row">
-                                <div class="color-box-selected" onclick="changeTheme(this)" id="col-red" data-color="#F44336" style="background-color: #F44336;"></div>
-                                <div class="color-box" onclick="changeTheme(this)" id="col-pink" data-color="#E91E63" style="background-color: #E91E63;"></div>
-                                <div class="color-box" onclick="changeTheme(this)" id="col-purple" data-color="#9C27B0" style="background-color: #9C27B0;"></div>
-                                <div class="color-box" onclick="changeTheme(this)" id="col-deep-purple" data-color="#673AB7" style="background-color: #673AB7;"></div>
-                                <div class="color-box" onclick="changeTheme(this)" id="col-indigo" data-color="#3F51B5" style="background-color: #3F51B5;"></div>
-                                <div class="color-box" onclick="changeTheme(this)" id="col-blue" data-color="#2196F3" style="background-color: #2196F3;"></div>
-                                <div class="color-box" onclick="changeTheme(this)" id="col-light-blue" data-color="#03A9F4" style="background-color: #03A9F4;"></div>
-                                <div class="color-box" onclick="changeTheme(this)" id="col-cyan" data-color="#00BCD4" style="background-color: #00BCD4;"></div>
-                                <div class="color-box" onclick="changeTheme(this)" id="col-teal" data-color="#009688" style="background-color: #009688;"></div>
-                                <div class="color-box" onclick="changeTheme(this)" id="col-green" data-color="#4CAF50" style="background-color: #4CAF50;"></div>
-                                <div class="color-box" onclick="changeTheme(this)" id="col-light-green" data-color="#8BC34A" style="background-color: #8BC34A;"></div>
-                                <div class="color-box" onclick="changeTheme(this)" id="col-lime" data-color="#CDDC39" style="background-color: #CDDC39;"></div>
-                                <div class="color-box" onclick="changeTheme(this)" id="col-yellow" data-color="#FFEB3B" style="background-color: #FFEB3B;"></div>
-                                <div class="color-box" onclick="changeTheme(this)" id="col-amber" data-color="#FFC107" style="background-color: #FFC107;"></div>
-                                <div class="color-box" onclick="changeTheme(this)" id="col-orange" data-color="#FF9800" style="background-color: #FF9800;"></div>
-                            </div>
-                            <div class="section-title">
-                                Look
-                            </div>
-                            <div class="settings">
-                                <span class="option"><label for="darkMode">Dark mode</label> <input type="checkbox" id="darkMode" onchange="toggleDarkMode()"></span>
+                                <div class="menu-item" id="wallpaper" onclick="openSubmenu('wallpaper', this)">
+                                    <div class="menu-item-content"><div class="material-symbols-rounded">wallpaper</div> <span class="menu-item-title">Wallpaper</span></div>
+                                    <!-- arrow to the right -->
+                                    <div class="arrow">
+                                        <i class="material-symbols-rounded">chevron_right</i>
+                                    </div>
+                                </div>
+
+                        <!--   <div class="menu-item" id="layout" onclick="openSubmenu('layout', this)">
+                                    <div class="menu-item-content"><div class="material-symbols-outlined">view_column</div> <span class="menu-item-title">Layout</span></div>
+                                    <div class="arrow">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </div>
+                                </div>
+                        --> 
+
                             </div>
                         </div>
                     </div>
                     
                     
+
                     <div class="tab" id="tab-language" data-tab="language">
                         <div class="section">
                             <div class="warning">
@@ -158,17 +230,13 @@
                             </div>
                             <div class="section-langList">
                                 <div class="langList-item" onclick="setLanguage('en')"><label for="langEN">English</label> <div class="checkbox" id="en"></div></div>
-                                <div class="langList-item" onclick="setLanguage('es')"><label for="langES">Español</label> <div class="checkbox" id="es"></div></div>
-                                <div class="langList-item" onclick="setLanguage('de')"><label for="langDE">Deutsch</label> <div class="checkbox" id="de"></div></div>
-                                <div class="langList-item" onclick="setLanguage('fr')"><label for="langFR">Français</label> <div class="checkbox" id="fr"></div></div>
-                                <div class="langList-item" onclick="setLanguage('it')"><label for="langIT">Italiano</label> <div class="checkbox" id="it"></div></div>
                             </div>
                         </div>
                     </div>
                     
                     <div class="tab" id="tab-about" data-tab="about">
                         <div class="section">
-                           <div class="section-update-title">
+                            <div class="section-update-title">
                                 <div class="material-icons">cast</div>
                                 <br>
                                 CastView
@@ -176,7 +244,6 @@
                             </div>
                             <div class="section-update-description">
                                     <b>Current Version:</b> <span id="version">0.0.0</span><br>
-
                                     <!-- <br> -->
                                     <!-- <b>Latest Version:</b> <span id="lastestVersion">Unknown</span> -->
                                 <br>
@@ -184,6 +251,7 @@
                                 
                                     <span id="updateInfo"></span>
                                 </div>
+
                         </div>
                     </div>
 
@@ -249,13 +317,14 @@
         </div>
         
         <div class="contentArea" id="topRight">
+
         </div>
         
         <div class="contentArea" id="bottomLeft">
             <div class="digitalClock">
                 <div class="buttons">
-                    <button id="music" type="button" onclick="setWallpaper(settings.provider)"><i class="fas fa-redo"></i></button>
-                    <button id="settings" type="button" onclick="openPopup('settings')"><i class="fas fa-cog"></i></button>
+                    <button id="mn-music" type="button" onclick="setWallpaper(settings.provider)"><i class="material-symbols-rounded">magic_button</i>
+                    <button id="mn-settings" type="button" onclick="openPopup('settings')"><i class="material-icons">settings</i></button>
                 </div>
                 <div id="date"></div>
                 <!-- add support to AM-PM -->
@@ -265,8 +334,22 @@
         
         
         <div class="contentArea" id="bottomRight">
-            <div class="credits">
-                
+            <div class="pinnedLinksWrapper">
+                <div class="pinnedLink">
+                    <img src="https://www.google.com/s2/favicons?sz=64&domain_url=google.com" alt="Google">
+                </div>
+                <div class="pinnedLink">
+                    <img src="https://www.google.com/s2/favicons?sz=64&domain_url=youtube.com" alt="YouTube">
+                </div>
+                <div class="pinnedLink">
+                    <img src="https://www.google.com/s2/favicons?sz=64&domain_url=facebook.com" alt="Facebook">
+                </div>
+                <div class="pinnedLink">
+                    <img src="https://www.google.com/s2/favicons?sz=64&domain_url=twitter.com" alt="Twitter">
+                </div>
+                <div class="pinnedLink">
+                    <img src="https://www.google.com/s2/favicons?sz=64&domain_url=reddit.com" alt="Reddit">
+                </div>
             </div>
         </div>
     </div>
